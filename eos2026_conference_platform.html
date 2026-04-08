@@ -1,0 +1,774 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f4f3ef;--surface:#fff;--border:#e0ddd5;--text:#1a1916;--muted:#6b6860;
+  --accent:#1a3a6b;--accent2:#c8320a;--gold:#b8860b;
+  --hallA:#1a3a6b;--hallB:#8b1a1a;--hallC:#1a5a2a;--hall1:#6b4a1a;--hall2:#4a1a6b;--hall3:#1a5a5a;--hall4:#5a4a1a;--hall5:#1a4a5a;
+}
+body{font-family:'Georgia',serif;background:var(--bg);color:var(--text);font-size:13px}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:620px}
+.sidebar{background:#1a1916;color:#f0ede6;display:flex;flex-direction:column}
+.sidebar-head{padding:16px;border-bottom:1px solid #2a2a27}
+.eos-logo{font-size:20px;font-weight:bold;letter-spacing:1px;color:#d4a843}EOS 2026
+.eos-sub{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#666;margin-top:2px}
+.eos-dates{font-size:10px;color:#888;margin-top:6px}
+.nav-sec{padding:12px 0 4px;border-bottom:1px solid #252521}
+.nl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#444;padding:0 14px;margin-bottom:4px}
+.ni{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;font-size:11px;color:#888;border-left:2px solid transparent;transition:all .12s}
+.ni:hover{color:#f0ede6;background:#222}
+.ni.active{color:#f0ede6;background:#252521;border-left-color:#d4a843}
+.nc{margin-left:auto;font-size:9px;background:#2a2a27;color:#555;padding:1px 5px;border-radius:6px}
+.sf{margin-top:auto;padding:12px 14px;font-size:9px;color:#333;border-top:1px solid #222}
+/* Main */
+.main{overflow:auto}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.topbar h1{font-size:15px;font-weight:bold}
+.content{padding:16px}
+/* Buttons */
+.btn{padding:6px 12px;font-size:11px;border-radius:3px;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:inherit;transition:all .12s}
+.btn:hover{background:#f0ede6}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{background:#142d52}
+.btn-sm{padding:3px 8px;font-size:10px}
+.btn-day{padding:6px 14px;font-size:11px;border-radius:3px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit}
+.btn-day.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:14px;margin-bottom:10px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.card-title{font-size:13px;font-weight:bold}
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:10px;text-align:center}
+.sv{font-size:22px;font-weight:bold;font-family:'Courier New',monospace;color:var(--accent)}
+.sl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-top:2px}
+/* Glance table */
+.glance-wrap{overflow-x:auto;margin-bottom:14px}
+.glance-table{border-collapse:collapse;min-width:900px;width:100%;font-size:10px}
+.glance-table th{padding:6px 8px;text-align:center;color:#fff;font-size:9px;letter-spacing:.5px;white-space:nowrap}
+.glance-table td.time-col{font-family:'Courier New',monospace;font-size:10px;color:var(--muted);padding:4px 6px;border:1px solid var(--border);white-space:nowrap;vertical-align:top}
+.glance-table td.hall-cell{border:1px solid var(--border);padding:4px 6px;vertical-align:top;font-size:10px;cursor:pointer;transition:background .1s}
+.glance-table td.hall-cell:hover{opacity:.85}
+.cell-num{font-family:'Courier New',monospace;font-size:9px;color:#999}
+.cell-name{font-size:10px;line-height:1.3;margin-top:1px}
+/* Session list */
+.sess-row{display:grid;grid-template-columns:40px 80px 1fr 100px 80px auto;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px}
+.sess-row:last-child{border-bottom:none}
+.snum{font-family:'Courier New',monospace;font-weight:bold;color:var(--accent)}
+.stime{font-family:'Courier New',monospace;color:var(--muted);font-size:10px}
+/* Hall badge */
+.hbadge{font-size:9px;padding:2px 6px;border-radius:2px;color:#fff;white-space:nowrap}
+/* Day tabs */
+.day-tabs{display:flex;gap:6px;margin-bottom:14px}
+/* Form */
+label{font-size:10px;color:var(--muted);display:block;margin-bottom:2px;margin-top:8px;letter-spacing:.5px;text-transform:uppercase}
+label:first-child{margin-top:0}
+input,select,textarea{width:100%;font-size:12px;font-family:inherit;color:var(--text);background:#fafaf8;border:1px solid var(--border);border-radius:3px;padding:6px 8px;outline:none}
+input:focus,select:focus{border-color:var(--accent)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+/* At a glance colors per hall */
+.th-a{background:var(--hallA)}
+.th-b{background:var(--hallB)}
+.th-c{background:var(--hallC)}
+.th-1{background:var(--hall1)}
+.th-2{background:var(--hall2)}
+.th-3{background:var(--hall3)}
+.th-4{background:var(--hall4)}
+.th-5{background:var(--hall5)}
+.bg-a{background:#eef1f8}
+.bg-b{background:#f8eeee}
+.bg-c{background:#eef5ef}
+.bg-1{background:#f5f0e8}
+.bg-2{background:#f0eef8}
+.bg-3{background:#eef5f5}
+.bg-4{background:#f5f3e8}
+.bg-5{background:#eef3f5}
+.bg-break{background:#f9f9f6;color:var(--muted);text-align:center;font-style:italic;font-size:10px}
+/* type badge */
+.badge-sym{background:#eef1f8;color:var(--accent);font-size:9px;padding:1px 5px;border-radius:2px}
+.badge-course{background:#eef5ef;color:#1a5a2a;font-size:9px;padding:1px 5px;border-radius:2px}
+.badge-kl{background:#fdf5e6;color:var(--gold);font-size:9px;padding:1px 5px;border-radius:2px}
+.badge-break{background:#f5f5f5;color:#999;font-size:9px;padding:1px 5px;border-radius:2px}
+.toast{position:fixed;bottom:16px;right:16px;background:#1a1916;color:#fff;padding:8px 14px;border-radius:4px;font-size:11px;z-index:999;display:none}
+</style>
+
+<div class="app">
+<div class="sidebar">
+  <div class="sidebar-head">
+    <div class="eos-logo">EOS 2026</div>
+    <div class="eos-sub">Egyptian Ophthalmological Society</div>
+    <div class="eos-dates">29 Apr – 1 May 2026 · Cairo</div>
+  </div>
+  <div class="nav-sec">
+    <div class="nl">Overview</div>
+    <div class="ni active" onclick="showPage('dashboard')" id="nav-dashboard">◈ Dashboard</div>
+    <div class="ni" onclick="showPage('glance')" id="nav-glance">▦ At a Glance <span class="nc">3 days</span></div>
+  </div>
+  <div class="nav-sec">
+    <div class="nl">Program</div>
+    <div class="ni" onclick="showPage('sessions')" id="nav-sessions">◧ Sessions <span class="nc" id="nc-sess">0</span></div>
+    <div class="ni" onclick="showPage('doctors')" id="nav-doctors">◉ Doctors <span class="nc" id="nc-dr">0</span></div>
+    <div class="ni" onclick="showPage('talks')" id="nav-talks">◈ Talks <span class="nc" id="nc-talks">0</span></div>
+  </div>
+  <div class="nav-sec">
+    <div class="nl">Export</div>
+    <div class="ni" onclick="showPage('program')" id="nav-program">▤ Full Program</div>
+    <div class="ni" onclick="showPage('consent')" id="nav-consent">✎ Consent Forms</div>
+    <div class="ni" onclick="showPage('personal')" id="nav-personal">◉ Personal Schedule</div>
+  </div>
+  <div class="sf">ACCESS Events Platform · EOS 2026</div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <h1 id="page-title">Dashboard</h1>
+    <div id="topbar-actions"></div>
+  </div>
+  <div class="content" id="page-content"></div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== DATA =====
+const HALLS = [
+  {key:'A',name:'Hall A',sub:'Al Saraya 1',cls:'a'},
+  {key:'B',name:'Hall B',sub:'Al Hambra',cls:'b'},
+  {key:'C',name:'Hall C',sub:'Abdeen',cls:'c'},
+  {key:'1',name:'Hall 1',sub:'Montazah 1,2',cls:'1'},
+  {key:'2',name:'Hall 2',sub:'Montazah 3,4',cls:'2'},
+  {key:'3',name:'Hall 3',sub:'Mamouniah',cls:'3'},
+  {key:'4',name:'Hall 4',sub:'San Souci',cls:'4'},
+  {key:'5',name:'Hall 5',sub:'Al Manial',cls:'5'},
+];
+
+const DAYS = [
+  {key:'wed',label:'Wed 29 Apr',date:'2026-04-29'},
+  {key:'thu',label:'Thu 30 Apr',date:'2026-04-30'},
+  {key:'fri',label:'Fri 1 May',date:'2026-05-01'},
+];
+
+// Sessions loaded from your PDFs
+let sessions = [
+// WEDNESDAY 29 APR
+{id:1,day:'wed',num:1,name:'Registration',hall:'',start:'08:00',end:'',type:'Break'},
+{id:3,day:'wed',num:3,name:'Glaucoma: Primary Angle Closure Glaucoma',hall:'A',start:'10:00',end:'11:30',type:'Symposium'},
+{id:5,day:'wed',num:5,name:'Oculoplastic: Eyelid Reconstruction',hall:'B',start:'10:00',end:'11:30',type:'Symposium'},
+{id:7,day:'wed',num:7,name:'Basics of Phaco Dynamics, Fluidics & More',hall:'C',start:'10:00',end:'11:30',type:'Course'},
+{id:9,day:'wed',num:9,name:'Pentacam Interpretation: Step by Step',hall:'1',start:'10:00',end:'11:30',type:'Course'},
+{id:11,day:'wed',num:11,name:'How to Deal with Complications during Phacoemulsification',hall:'2',start:'10:00',end:'11:30',type:'Course'},
+{id:13,day:'wed',num:13,name:'Video Session',hall:'3',start:'10:00',end:'12:00',type:'Symposium'},
+{id:15,day:'wed',num:15,name:'Young Ophthalmologists 1: Anterior',hall:'4',start:'10:00',end:'11:30',type:'Symposium'},
+{id:17,day:'wed',num:17,name:'Endophthalmitis',hall:'5',start:'10:00',end:'11:30',type:'Course'},
+{id:19,day:'wed',num:19,name:'Refractive: Lenticule Extraction Today',hall:'A',start:'11:30',end:'13:00',type:'Symposium'},
+{id:21,day:'wed',num:21,name:'Keynote Lecture 1',hall:'B',start:'11:30',end:'11:45',type:'Keynote'},
+{id:23,day:'wed',num:23,name:'Managing Capsular Complications During Phacoemulsification',hall:'C',start:'11:30',end:'13:00',type:'Course'},
+{id:25,day:'wed',num:25,name:'Basic Course in Therapeutic Ophthalmic Lasers',hall:'1',start:'11:30',end:'13:00',type:'Course'},
+{id:27,day:'wed',num:27,name:'Orbit',hall:'2',start:'11:30',end:'13:00',type:'Course'},
+{id:29,day:'wed',num:29,name:'NVG: Will The Monster be Tamed?',hall:'4',start:'11:30',end:'13:00',type:'Course'},
+{id:31,day:'wed',num:31,name:'New Perspectives in Management of Advanced Keratoconus',hall:'5',start:'11:30',end:'13:00',type:'Course'},
+{id:32,day:'wed',num:32,name:'Pediatric: Intraoperative Surprises and Anonymous Redos',hall:'B',start:'11:45',end:'12:35',type:'Symposium'},
+{id:33,day:'wed',num:33,name:'Mastering the Unseen: Advanced Vitrectomy Techniques',hall:'3',start:'12:00',end:'13:00',type:'Course'},
+{id:34,day:'wed',num:34,name:'Keynote Lecture 2',hall:'B',start:'12:35',end:'13:00',type:'Keynote'},
+{id:35,day:'wed',num:35,name:'Coffee Break',hall:'',start:'13:00',end:'14:00',type:'Break'},
+{id:37,day:'wed',num:37,name:'Keynote Lecture 3',hall:'A',start:'14:00',end:'14:30',type:'Keynote'},
+{id:39,day:'wed',num:39,name:'Comprehensive Session 1',hall:'B',start:'14:00',end:'14:30',type:'Comprehensive'},
+{id:41,day:'wed',num:41,name:'Keynote Lecture 4',hall:'C',start:'14:00',end:'14:20',type:'Keynote'},
+{id:43,day:'wed',num:43,name:'Femtosecond Intrastromal Lenticule Extraction Beyond Virgin Eyes',hall:'1',start:'14:00',end:'15:30',type:'Course'},
+{id:45,day:'wed',num:45,name:'Blepharoplasty and Aesthetic Lid Surgery',hall:'2',start:'14:00',end:'15:00',type:'Course'},
+{id:47,day:'wed',num:47,name:'Diabetic Retinopathy from A to Z',hall:'3',start:'14:00',end:'15:30',type:'Course'},
+{id:49,day:'wed',num:49,name:'Pediatric Glaucoma: A Challenge Made Easy',hall:'4',start:'14:00',end:'15:30',type:'Course'},
+{id:51,day:'wed',num:51,name:'Mastering Corneal Ectasia: From Diagnosis to Advanced Management',hall:'5',start:'14:00',end:'15:30',type:'Course'},
+{id:52,day:'wed',num:52,name:'Planning Your Future with Experts',hall:'C',start:'14:20',end:'15:30',type:'Symposium'},
+{id:53,day:'wed',num:53,name:'Cataract: Unhappy Cataract Patient',hall:'A',start:'14:30',end:'16:00',type:'Symposium'},
+{id:54,day:'wed',num:54,name:'Keynote Lecture 5',hall:'B',start:'14:30',end:'14:50',type:'Keynote'},
+{id:55,day:'wed',num:55,name:'Retina: Everyday Retina Challenge',hall:'B',start:'14:50',end:'16:00',type:'Symposium'},
+{id:57,day:'wed',num:57,name:'Ptosis',hall:'2',start:'15:00',end:'16:00',type:'Course'},
+{id:59,day:'wed',num:59,name:'Glaucoma: Basics of Glaucoma Medical Treatment',hall:'C',start:'15:30',end:'16:30',type:'Symposium'},
+{id:61,day:'wed',num:61,name:'Photorefractive Keratectomy from A to Z',hall:'1',start:'15:30',end:'17:00',type:'Course'},
+{id:63,day:'wed',num:63,name:'Vitreomacular Interface Disorders',hall:'3',start:'15:30',end:'17:00',type:'Course'},
+{id:65,day:'wed',num:65,name:'Free Paper 1',hall:'4',start:'15:30',end:'16:30',type:'Free Paper'},
+{id:69,day:'wed',num:69,name:'Phakic IOLs Excellence',hall:'5',start:'15:30',end:'17:00',type:'Course'},
+{id:71,day:'wed',num:71,name:'Keynote Lecture 6',hall:'A',start:'16:00',end:'16:30',type:'Keynote'},
+{id:73,day:'wed',num:73,name:'Saudi Ophthalmological Society Symposium',hall:'B',start:'16:00',end:'17:00',type:'Symposium'},
+{id:75,day:'wed',num:75,name:'Lacrimal',hall:'2',start:'16:00',end:'17:00',type:'Course'},
+{id:77,day:'wed',num:77,name:'Competition',hall:'A',start:'16:30',end:'18:00',type:'Competition'},
+{id:79,day:'wed',num:79,name:'Daily Practice Difficulties and Management',hall:'C',start:'16:30',end:'18:00',type:'Course'},
+{id:81,day:'wed',num:81,name:'Unlocking The Secrets of Deep Sclerectomy',hall:'4',start:'16:30',end:'17:30',type:'Course'},
+{id:83,day:'wed',num:83,name:'Cornea: Infectious Corneal Morbidity',hall:'B',start:'17:00',end:'18:10',type:'Symposium'},
+{id:85,day:'wed',num:85,name:'Refractive Solutions for Irregular Corneas and Keratoconus',hall:'1',start:'17:00',end:'18:00',type:'Course'},
+{id:87,day:'wed',num:87,name:'Computer Vision Syndrome (Digital Eye Strain)',hall:'2',start:'17:00',end:'18:30',type:'Course'},
+{id:89,day:'wed',num:89,name:'Retinal Buckling Update',hall:'3',start:'17:00',end:'18:30',type:'Course'},
+{id:91,day:'wed',num:91,name:'Course on Publication Literacy',hall:'5',start:'17:00',end:'18:00',type:'Course'},
+{id:93,day:'wed',num:93,name:"Schlemm's Canal Surgery for Glaucomas",hall:'4',start:'17:30',end:'18:30',type:'Course'},
+{id:94,day:'wed',num:94,name:'Lunch',hall:'',start:'18:30',end:'',type:'Break'},
+// THURSDAY 30 APR
+{id:97,day:'thu',num:97,name:'Glaucoma: My Routine Glaucoma Surgery – If This Ever Exists!',hall:'A',start:'09:00',end:'10:30',type:'Symposium'},
+{id:99,day:'thu',num:99,name:'Devastating Ocular Surface Conditions',hall:'B',start:'09:00',end:'10:00',type:'Course'},
+{id:101,day:'thu',num:101,name:'Surgical Best Save (Burkhard Dick)',hall:'C',start:'09:00',end:'10:30',type:'Course'},
+{id:103,day:'thu',num:103,name:'OCT and OCTA Updates in Different Retinal Diseases',hall:'1',start:'09:00',end:'10:00',type:'Course'},
+{id:105,day:'thu',num:105,name:'Cross-Linking in Focus: From Fundamentals to Future Frontiers',hall:'2',start:'09:00',end:'10:30',type:'Course'},
+{id:107,day:'thu',num:107,name:'Road to Optimizing Corneal Refractive Surgery Results',hall:'3',start:'09:00',end:'10:30',type:'Course'},
+{id:109,day:'thu',num:109,name:'Management of Strabismus Surgery Complications',hall:'4',start:'09:00',end:'10:30',type:'Course'},
+{id:111,day:'thu',num:111,name:"What's New and Interesting in Neuro-Ophthalmology?",hall:'5',start:'09:00',end:'10:45',type:'Course'},
+{id:114,day:'thu',num:114,name:'Keynote Lecture 7',hall:'B',start:'10:00',end:'10:30',type:'Keynote'},
+{id:115,day:'thu',num:115,name:'EnFace OCT: Clinical Applications & Pathological Insights',hall:'1',start:'10:00',end:'11:00',type:'Course'},
+{id:117,day:'thu',num:117,name:'Cornea: Posterior Lamellar Keratoplasty',hall:'A',start:'10:30',end:'11:40',type:'Symposium'},
+{id:119,day:'thu',num:119,name:'Keynote Lecture 8',hall:'B',start:'10:30',end:'10:55',type:'Keynote'},
+{id:121,day:'thu',num:121,name:'Retina: Retina Around The World',hall:'C',start:'10:30',end:'12:00',type:'Symposium'},
+{id:123,day:'thu',num:123,name:'Basics of KLEx Surgery: Principles and Surgical Techniques',hall:'2',start:'10:30',end:'12:00',type:'Course'},
+{id:125,day:'thu',num:125,name:'The Golden Rules of Vitreoretinal Surgery',hall:'3',start:'10:30',end:'12:00',type:'Course'},
+{id:127,day:'thu',num:127,name:'Subthreshold Micropulse and Photobiomodulation in Ophthalmology',hall:'4',start:'10:30',end:'12:00',type:'Course'},
+{id:129,day:'thu',num:129,name:"Neuro-Ophthalmology: Cracking the Code: Modified McDonald's Criteria",hall:'5',start:'10:45',end:'12:00',type:'Course'},
+{id:130,day:'thu',num:130,name:'Pediatric: ISA Symposium – Case I Learned From',hall:'B',start:'10:55',end:'12:00',type:'Symposium'},
+{id:131,day:'thu',num:131,name:'Ocular Ultrasound and Biometry',hall:'1',start:'11:00',end:'12:00',type:'Course'},
+{id:132,day:'thu',num:132,name:'Keynote Lecture 9',hall:'A',start:'11:40',end:'12:00',type:'Keynote'},
+{id:137,day:'thu',num:137,name:'Opening Ceremony',hall:'A',start:'12:00',end:'13:30',type:'Ceremony'},
+{id:139,day:'thu',num:139,name:'Coffee Break',hall:'',start:'13:30',end:'14:00',type:'Break'},
+{id:141,day:'thu',num:141,name:'Keynote Lecture 10',hall:'A',start:'14:00',end:'14:20',type:'Keynote'},
+{id:143,day:'thu',num:143,name:'Comprehensive Session 2',hall:'B',start:'14:00',end:'14:30',type:'Comprehensive'},
+{id:145,day:'thu',num:145,name:'Iris and Pupil Surgery: From the Basic to the Advanced (Ike Ahmed)',hall:'C',start:'14:00',end:'15:30',type:'Course'},
+{id:147,day:'thu',num:147,name:'Modern ECCE: Step Towards Phacoemulsification',hall:'1',start:'14:00',end:'15:30',type:'Course'},
+{id:149,day:'thu',num:149,name:'Challenges and Solutions in DALK Surgery',hall:'2',start:'14:00',end:'15:30',type:'Course'},
+{id:151,day:'thu',num:151,name:'Decision Making in Retinal Detachments: Clinic and OR',hall:'3',start:'14:00',end:'15:30',type:'Course'},
+{id:153,day:'thu',num:153,name:'Nystagmus Made Simple Workshop',hall:'4',start:'14:00',end:'15:00',type:'Course'},
+{id:155,day:'thu',num:155,name:'The Masquerades',hall:'5',start:'14:00',end:'15:30',type:'Course'},
+{id:156,day:'thu',num:156,name:'Retina: How Do I Do It?',hall:'A',start:'14:20',end:'15:30',type:'Symposium'},
+{id:157,day:'thu',num:157,name:'Refractive: Where Science Meets Precision',hall:'B',start:'14:30',end:'15:30',type:'Symposium'},
+{id:159,day:'thu',num:159,name:'Pediatric Cataract: The Decision is not Always Easy',hall:'4',start:'15:00',end:'16:30',type:'Course'},
+{id:161,day:'thu',num:161,name:'Cataract: Phaco Complications, You Make The Call',hall:'A',start:'15:30',end:'17:00',type:'Symposium'},
+{id:163,day:'thu',num:163,name:'Keynote Lecture 11',hall:'B',start:'15:30',end:'16:00',type:'Keynote'},
+{id:165,day:'thu',num:165,name:'Glaucoma: Basics of Secondary Glaucoma',hall:'C',start:'15:30',end:'16:30',type:'Symposium'},
+{id:167,day:'thu',num:167,name:'New Diseases & Novel Diagnostic Findings in OCT',hall:'1',start:'15:30',end:'17:00',type:'Course'},
+{id:169,day:'thu',num:169,name:'Basics of DMEK: From Tissue to Recovery',hall:'2',start:'15:30',end:'17:00',type:'Course'},
+{id:171,day:'thu',num:171,name:'Cataract Surgery & IOL Implantation in Vitreoretinal Surgeries',hall:'3',start:'15:30',end:'16:45',type:'Course'},
+{id:173,day:'thu',num:173,name:'STDs and Uveitis in Egypt: The Power of Collaborative Care',hall:'5',start:'15:30',end:'17:00',type:'Course'},
+{id:175,day:'thu',num:175,name:'Comprehensive Session 3',hall:'B',start:'16:00',end:'16:30',type:'Comprehensive'},
+{id:176,day:'thu',num:176,name:'Keynote Lecture 12',hall:'B',start:'16:30',end:'16:50',type:'Keynote'},
+{id:179,day:'thu',num:179,name:'The Ocular Surface as a Real Refractive Surface',hall:'C',start:'16:30',end:'18:00',type:'Course'},
+{id:181,day:'thu',num:181,name:'Clinical Approach to Cases with Abnormal Head Posture',hall:'4',start:'16:30',end:'18:00',type:'Course'},
+{id:182,day:'thu',num:182,name:'Free Paper 2: Retina and Investigations',hall:'3',start:'16:45',end:'18:00',type:'Free Paper'},
+{id:183,day:'thu',num:183,name:'Retina: Medical Retina Updates',hall:'B',start:'16:50',end:'18:00',type:'Symposium'},
+{id:184,day:'thu',num:184,name:'Jamjoom Competition',hall:'A',start:'17:00',end:'18:00',type:'Competition'},
+{id:189,day:'thu',num:189,name:'Non Medical Treatment of Microbial Keratitis',hall:'2',start:'17:00',end:'18:30',type:'Course'},
+{id:193,day:'thu',num:193,name:'Your Correct Way to Write Beneficial Research Proposal',hall:'5',start:'17:00',end:'18:00',type:'Course'},
+{id:194,day:'thu',num:194,name:'Lunch',hall:'',start:'18:30',end:'',type:'Break'},
+// FRIDAY 1 MAY
+{id:195,day:'fri',num:195,name:'Glaucoma: Challenging Glaucoma Cases',hall:'A',start:'09:30',end:'10:30',type:'Symposium'},
+{id:197,day:'fri',num:197,name:'Oculoplastic: Orbital and Periocular Trauma',hall:'B',start:'09:30',end:'10:30',type:'Symposium'},
+{id:199,day:'fri',num:199,name:'IOL Implantation in the Absence of Capsular Support',hall:'C',start:'09:30',end:'11:00',type:'Course'},
+{id:201,day:'fri',num:201,name:"Infectious Keratitis.. What's New?",hall:'1',start:'09:30',end:'11:00',type:'Course'},
+{id:203,day:'fri',num:203,name:'Corneal Crosslinking Updates in 2026',hall:'2',start:'09:30',end:'11:00',type:'Course'},
+{id:205,day:'fri',num:205,name:'Optimizing Interpretation of OCT & OCTA in Uncommon Retinal Disorders',hall:'3',start:'09:30',end:'11:00',type:'Course'},
+{id:207,day:'fri',num:207,name:'Surgical Decision in A Child: When and How?',hall:'4',start:'09:30',end:'11:00',type:'Course'},
+{id:209,day:'fri',num:209,name:'Free Paper 3',hall:'5',start:'09:30',end:'10:30',type:'Free Paper'},
+{id:210,day:'fri',num:210,name:'Keynote Lecture 13',hall:'A',start:'10:30',end:'11:00',type:'Keynote'},
+{id:211,day:'fri',num:211,name:'Keynote Lecture 14',hall:'B',start:'10:30',end:'11:00',type:'Keynote'},
+{id:212,day:'fri',num:212,name:'Free Paper 4: Pediatric and Uveitis',hall:'5',start:'10:30',end:'11:30',type:'Free Paper'},
+{id:213,day:'fri',num:213,name:'Keynote Lecture 15',hall:'A',start:'11:00',end:'11:20',type:'Keynote'},
+{id:214,day:'fri',num:214,name:'Refractive: Emerging Technologies in Refractive Surgery',hall:'B',start:'11:00',end:'12:40',type:'Symposium'},
+{id:215,day:'fri',num:215,name:'Capsular Surgery',hall:'C',start:'11:00',end:'12:40',type:'Course'},
+{id:217,day:'fri',num:217,name:'Fundus Fluorescein Angiography and Basic OCT Course',hall:'1',start:'11:00',end:'12:40',type:'Course'},
+{id:219,day:'fri',num:219,name:'Medicolegal Principles and Guidelines in Ophthalmology',hall:'2',start:'11:00',end:'12:40',type:'Course'},
+{id:221,day:'fri',num:221,name:'Rhegmatogenous Retinal Detachment: Choice of Treatment Options',hall:'3',start:'11:00',end:'12:40',type:'Course'},
+{id:223,day:'fri',num:223,name:'Sight Unseen: Navigating The Dilemma of The Apparently Blind Infant',hall:'4',start:'11:00',end:'12:40',type:'Course'},
+{id:224,day:'fri',num:224,name:'Retina: Penetrating Ocular Trauma (Tips And Tricks)',hall:'A',start:'11:20',end:'12:40',type:'Symposium'},
+{id:225,day:'fri',num:225,name:'Visual Field',hall:'5',start:'11:30',end:'12:40',type:'Course'},
+{id:227,day:'fri',num:227,name:'Coffee Break and Gomaa Prayers',hall:'',start:'12:40',end:'14:00',type:'Break'},
+{id:229,day:'fri',num:229,name:'Keynote Lecture 16',hall:'A',start:'14:00',end:'14:25',type:'Keynote'},
+{id:231,day:'fri',num:231,name:'Comprehensive Session 4',hall:'B',start:'14:00',end:'14:30',type:'Comprehensive'},
+{id:233,day:'fri',num:233,name:'Interesting Cases Discussion Based on Imaging',hall:'C',start:'14:00',end:'15:30',type:'Course'},
+{id:235,day:'fri',num:235,name:'Anterior Segment Imaging',hall:'1',start:'14:00',end:'15:30',type:'Course'},
+{id:237,day:'fri',num:237,name:'Updates in Ocular Cicatricial Pemphigoid',hall:'2',start:'14:00',end:'15:30',type:'Course'},
+{id:239,day:'fri',num:239,name:'Proliferative Diabetic Retinopathy Update',hall:'3',start:'14:00',end:'15:30',type:'Course'},
+{id:241,day:'fri',num:241,name:'Mastering Strabismus: The Smart Way to Decide',hall:'4',start:'14:00',end:'15:00',type:'Course'},
+{id:243,day:'fri',num:243,name:'Electrophysiology',hall:'5',start:'14:00',end:'15:30',type:'Course'},
+{id:244,day:'fri',num:244,name:'Barraquer Eye Institute Symposium',hall:'A',start:'14:25',end:'16:00',type:'Symposium'},
+{id:246,day:'fri',num:246,name:'Cornea: Irregular Cornea Dilemmas',hall:'B',start:'14:30',end:'15:40',type:'Symposium'},
+{id:247,day:'fri',num:247,name:'Surgical Interventions in Non-Infectious Uveitis',hall:'4',start:'15:00',end:'16:15',type:'Course'},
+{id:251,day:'fri',num:251,name:'IOL Related Challenges',hall:'C',start:'15:30',end:'17:00',type:'Course'},
+{id:253,day:'fri',num:253,name:'Post LASIK Ectasia, The Refractive Surgery Nightmare',hall:'1',start:'15:30',end:'17:00',type:'Course'},
+{id:255,day:'fri',num:255,name:'Mastering DMEK',hall:'2',start:'15:30',end:'17:00',type:'Course'},
+{id:257,day:'fri',num:257,name:'Pigmented Eye Lesions',hall:'3',start:'15:30',end:'17:00',type:'Course'},
+{id:259,day:'fri',num:259,name:'Neuro-Rehabilitation and Vision Rehabilitation Course',hall:'5',start:'15:30',end:'17:00',type:'Course'},
+{id:260,day:'fri',num:260,name:'Keynote Lecture 17',hall:'B',start:'15:40',end:'16:00',type:'Keynote'},
+{id:261,day:'fri',num:261,name:'Keynote Lecture 18',hall:'A',start:'16:00',end:'16:30',type:'Keynote'},
+{id:263,day:'fri',num:263,name:'Comprehensive Session 5',hall:'B',start:'16:00',end:'16:30',type:'Comprehensive'},
+{id:264,day:'fri',num:264,name:'Overcoming Therapeutic Roadblocks in Non-Infectious Uveitis',hall:'4',start:'16:15',end:'17:30',type:'Course'},
+{id:265,day:'fri',num:265,name:'Cataract: Phaco in Difficult Cases',hall:'A',start:'16:30',end:'18:00',type:'Symposium'},
+{id:266,day:'fri',num:266,name:'Glaucoma Surgery from Good to Perfect',hall:'B',start:'16:30',end:'17:30',type:'Symposium'},
+{id:271,day:'fri',num:271,name:'Phacoemulsification Across Case Variability',hall:'C',start:'17:00',end:'18:30',type:'Course'},
+{id:273,day:'fri',num:273,name:'Borderline Refractive Surgery: Do & Don\'t',hall:'1',start:'17:00',end:'18:30',type:'Course'},
+{id:275,day:'fri',num:275,name:'Advanced Ocular Trauma',hall:'2',start:'17:00',end:'18:30',type:'Course'},
+{id:277,day:'fri',num:277,name:'Tough Situations in Retina Clinic',hall:'3',start:'17:00',end:'18:30',type:'Course'},
+{id:279,day:'fri',num:279,name:'Young Ophthalmologists 3: Research Mostly Anterior',hall:'5',start:'17:00',end:'18:30',type:'Symposium'},
+{id:281,day:'fri',num:281,name:'The Infectious Uveitis Clinic',hall:'4',start:'17:30',end:'18:30',type:'Course'},
+{id:282,day:'fri',num:282,name:'Lunch',hall:'',start:'18:30',end:'',type:'Break'},
+];
+
+let doctors = [];
+let talks = [];
+let currentPage='dashboard';
+let currentDay='wed';
+
+function hallInfo(key){return HALLS.find(h=>h.key===key)||{name:'—',sub:'',cls:'a'}}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2000)}
+function typeBadge(type){
+  const map={Symposium:'badge-sym',Course:'badge-course',Keynote:'badge-kl',Break:'badge-break','Free Paper':'badge-sym',Competition:'badge-sym',Comprehensive:'badge-sym',Ceremony:'badge-kl'};
+  return`<span class="${map[type]||'badge-sym'}">${type}</span>`;
+}
+function updateCounts(){
+  document.getElementById('nc-sess').textContent=sessions.length;
+  document.getElementById('nc-dr').textContent=doctors.length;
+  document.getElementById('nc-talks').textContent=talks.length;
+}
+
+function showPage(page){
+  currentPage=page;
+  document.querySelectorAll('.ni').forEach(el=>el.classList.remove('active'));
+  const n=document.getElementById('nav-'+page);if(n)n.classList.add('active');
+  updateCounts();
+  const titles={dashboard:'Dashboard — EOS 2026',glance:'Program At a Glance',sessions:'Sessions',doctors:'Doctors',talks:'Talks',program:'Full Scientific Program',consent:'Consent Forms',personal:'Personal Schedules'};
+  document.getElementById('page-title').textContent=titles[page]||page;
+  const acts={sessions:'<button class="btn btn-primary btn-sm" onclick="addSessionForm()">+ Add Session</button>',doctors:'<button class="btn btn-primary btn-sm" onclick="addDoctorForm()">+ Add Doctor</button>',talks:'<button class="btn btn-primary btn-sm" onclick="addTalkForm()">+ Add Talk</button>'};
+  document.getElementById('topbar-actions').innerHTML=acts[page]||'';
+  ({dashboard:renderDashboard,glance:renderGlance,sessions:renderSessions,doctors:renderDoctors,talks:renderTalks,program:renderProgram,consent:renderConsent,personal:renderPersonal}[page]||renderDashboard)();
+}
+
+// DASHBOARD
+function renderDashboard(){
+  const wc=sessions.filter(s=>s.day==='wed').length;
+  const tc=sessions.filter(s=>s.day==='thu').length;
+  const fc=sessions.filter(s=>s.day==='fri').length;
+  document.getElementById('page-content').innerHTML=`
+  <div class="stats">
+    <div class="stat"><div class="sv">${sessions.length}</div><div class="sl">Total Sessions</div></div>
+    <div class="stat"><div class="sv">${wc}</div><div class="sl">Wed 29 Apr</div></div>
+    <div class="stat"><div class="sv">${tc}</div><div class="sl">Thu 30 Apr</div></div>
+    <div class="stat"><div class="sv">${fc}</div><div class="sl">Fri 1 May</div></div>
+    <div class="stat"><div class="sv">8</div><div class="sl">Halls</div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><span class="card-title">Conference — EOS 2026</span></div>
+    <div class="g2">
+      <div><label>Conference Name</label><input value="International Congress of the Egyptian Ophthalmological Society — EOS 2026"></div>
+      <div><label>Venue</label><input value="InterContinental Citystars, Cairo, Egypt"></div>
+    </div>
+    <div class="g3" style="margin-top:8px">
+      <div><label>Start Date</label><input type="date" value="2026-04-29"></div>
+      <div><label>End Date</label><input type="date" value="2026-05-01"></div>
+      <div><label>Organizer</label><input value="ACCESS Events"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><span class="card-title">Halls — InterContinental Citystars</span></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+      ${HALLS.map(h=>`<div style="border:1px solid var(--border);border-radius:3px;padding:8px;font-size:11px">
+        <div style="font-weight:bold;color:var(--accent)">${h.name}</div>
+        <div style="color:var(--muted);font-size:10px">«${h.sub}»</div>
+        <div style="font-size:10px;margin-top:4px;color:var(--muted)">${sessions.filter(s=>s.hall===h.key).length} sessions</div>
+      </div>`).join('')}
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:8px">
+    <button class="btn btn-primary" onclick="showPage('glance')">View Program At a Glance →</button>
+  </div>`;
+}
+
+// AT A GLANCE
+function renderGlance(){
+  const times_wed=['10:00','10:30','11:00','11:30','12:00','12:30','13:00','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00'];
+  const times_thu=['09:00','09:30','10:00','10:30','11:00','11:30','12:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00'];
+  const times_fri=['09:30','10:00','10:30','11:00','11:30','12:00','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00'];
+  const timeSets={wed:times_wed,thu:times_thu,fri:times_fri};
+  const times=timeSets[currentDay];
+  const daySessions=sessions.filter(s=>s.day===currentDay&&s.hall);
+
+  function getCell(hall,timeSlot){
+    const s=daySessions.find(s=>s.hall===hall&&s.start<=timeSlot&&(s.end>timeSlot||!s.end));
+    if(!s)return'<td class="hall-cell"></td>';
+    const h=hallInfo(hall);
+    return`<td class="hall-cell bg-${h.cls}" title="${s.name}">
+      <div class="cell-num">#${s.num}</div>
+      <div class="cell-name">${s.name.length>60?s.name.slice(0,58)+'…':s.name}</div>
+    </td>`;
+  }
+
+  document.getElementById('page-content').innerHTML=`
+  <div class="day-tabs">
+    ${DAYS.map(d=>`<button class="btn-day${currentDay===d.key?' active':''}" onclick="currentDay='${d.key}';renderGlance()">${d.label}</button>`).join('')}
+  </div>
+  <div class="glance-wrap">
+    <table class="glance-table">
+      <tr>
+        <th style="background:#1a1916;min-width:70px">TIME</th>
+        ${HALLS.map(h=>`<th class="th-${h.cls}" style="min-width:110px">${h.name}<br><span style="font-weight:normal;font-size:8px">«${h.sub}»</span></th>`).join('')}
+      </tr>
+      ${times.map(t=>{
+        const brk=sessions.find(s=>s.day===currentDay&&s.type==='Break'&&s.start===t);
+        if(brk)return`<tr><td class="time-col">${t}</td><td colspan="8" class="bg-break">${brk.name}</td></tr>`;
+        return`<tr>
+          <td class="time-col">${t}</td>
+          ${HALLS.map(h=>getCell(h.key,t)).join('')}
+        </tr>`;
+      }).join('')}
+    </table>
+  </div>`;
+}
+
+// SESSIONS
+function renderSessions(){
+  const daySessions=sessions.filter(s=>s.day===currentDay).sort((a,b)=>a.num-b.num);
+  document.getElementById('page-content').innerHTML=`
+  <div id="sess-form-area"></div>
+  <div class="day-tabs">
+    ${DAYS.map(d=>`<button class="btn-day${currentDay===d.key?' active':''}" onclick="currentDay='${d.key}';renderSessions()">${d.label}</button>`).join('')}
+    <span style="margin-left:8px;font-size:11px;color:var(--muted);align-self:center">${daySessions.length} sessions</span>
+  </div>
+  <div class="card" style="padding:8px 14px">
+    ${daySessions.map(s=>{
+      const h=hallInfo(s.hall);
+      return`<div class="sess-row">
+        <span class="snum">${String(s.num).padStart(3,'0')}</span>
+        <span class="stime">${s.start}${s.end?' – '+s.end:''}</span>
+        <span>${s.name}</span>
+        <span style="font-size:10px;color:var(--muted)">${s.hall?h.name+' «'+h.sub+'»':'—'}</span>
+        ${typeBadge(s.type)}
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-sm" onclick="editSession(${s.id})">Edit</button>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function addSessionForm(){
+  document.getElementById('sess-form-area').innerHTML=`
+  <div class="card" style="border-color:var(--accent);margin-bottom:10px">
+    <div class="card-hd"><span class="card-title">New Session</span><button class="btn btn-sm" onclick="renderSessions()">Cancel</button></div>
+    <div class="g4">
+      <div><label>Session #</label><input id="sf-num" type="number" placeholder="e.g. 295"></div>
+      <div><label>Day</label><select id="sf-day"><option value="wed">Wed 29 Apr</option><option value="thu">Thu 30 Apr</option><option value="fri">Fri 1 May</option></select></div>
+      <div><label>Hall</label><select id="sf-hall"><option value="">—</option>${HALLS.map(h=>`<option value="${h.key}">${h.name} «${h.sub}»</option>`).join('')}</select></div>
+      <div><label>Type</label><select id="sf-type"><option>Symposium</option><option>Course</option><option>Keynote</option><option>Free Paper</option><option>Comprehensive</option><option>Competition</option><option>Break</option></select></div>
+    </div>
+    <div style="margin-top:8px"><label>Session Name</label><input id="sf-name" placeholder="Full session name"></div>
+    <div class="g2" style="margin-top:8px">
+      <div><label>Start Time</label><input type="time" id="sf-start"></div>
+      <div><label>End Time</label><input type="time" id="sf-end"></div>
+    </div>
+    <div style="margin-top:10px"><button class="btn btn-primary" onclick="saveNewSession()">Add Session</button></div>
+  </div>`;
+}
+
+function saveNewSession(){
+  const num=parseInt(document.getElementById('sf-num').value);
+  const name=document.getElementById('sf-name').value.trim();
+  if(!name||!num){toast('Number and name required');return;}
+  sessions.push({id:Date.now(),day:document.getElementById('sf-day').value,num,name,hall:document.getElementById('sf-hall').value,start:document.getElementById('sf-start').value,end:document.getElementById('sf-end').value,type:document.getElementById('sf-type').value});
+  sessions.sort((a,b)=>a.num-b.num);
+  toast('Session added!');renderSessions();
+}
+
+function editSession(id){
+  const s=sessions.find(x=>x.id===id);if(!s)return;
+  document.getElementById('sess-form-area').innerHTML=`
+  <div class="card" style="border-color:var(--accent);margin-bottom:10px">
+    <div class="card-hd"><span class="card-title">Edit Session #${s.num}</span><button class="btn btn-sm" onclick="renderSessions()">Cancel</button></div>
+    <div class="g2">
+      <div><label>Session Name</label><input id="esf-name" value="${s.name.replace(/"/g,'&quot;')}"></div>
+      <div><label>Hall</label><select id="esf-hall"><option value="">—</option>${HALLS.map(h=>`<option value="${h.key}"${s.hall===h.key?' selected':''}>${h.name} «${h.sub}»</option>`).join('')}</select></div>
+    </div>
+    <div class="g3" style="margin-top:8px">
+      <div><label>Type</label><select id="esf-type"><option ${s.type==='Symposium'?'selected':''}>Symposium</option><option ${s.type==='Course'?'selected':''}>Course</option><option ${s.type==='Keynote'?'selected':''}>Keynote</option><option ${s.type==='Free Paper'?'selected':''}>Free Paper</option><option ${s.type==='Comprehensive'?'selected':''}>Comprehensive</option><option ${s.type==='Break'?'selected':''}>Break</option></select></div>
+      <div><label>Start</label><input type="time" id="esf-start" value="${s.start}"></div>
+      <div><label>End</label><input type="time" id="esf-end" value="${s.end||''}"></div>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <button class="btn btn-primary" onclick="saveEditSession(${id})">Save</button>
+      <button class="btn" style="color:var(--accent2)" onclick="if(confirm('Delete?')){sessions=sessions.filter(x=>x.id!==${id});toast('Deleted');renderSessions()}">Delete</button>
+    </div>
+  </div>`;
+}
+
+function saveEditSession(id){
+  const s=sessions.find(x=>x.id===id);
+  s.name=document.getElementById('esf-name').value;
+  s.hall=document.getElementById('esf-hall').value;
+  s.type=document.getElementById('esf-type').value;
+  s.start=document.getElementById('esf-start').value;
+  s.end=document.getElementById('esf-end').value;
+  toast('Saved!');renderSessions();
+}
+
+// DOCTORS
+function renderDoctors(){
+  document.getElementById('page-content').innerHTML=`
+  <div id="dr-form-area"></div>
+  <div class="card">
+    ${doctors.length===0?'<div style="text-align:center;padding:30px;color:var(--muted);font-style:italic">No doctors added yet. Click + Add Doctor to start.</div>':
+    doctors.map(d=>`<div style="display:grid;grid-template-columns:40px 1fr 160px 120px 80px auto;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px">
+      <span style="font-family:monospace;font-weight:bold;color:var(--accent)">${d.id}</span>
+      <span style="font-weight:bold">${d.name}</span>
+      <span style="color:var(--muted)">${d.email||'—'}</span>
+      <span style="font-family:monospace;color:var(--muted)">${d.phone||'—'}</span>
+      <span style="color:var(--muted);font-size:10px">${d.specialty||'—'}</span>
+      <button class="btn btn-sm" onclick="editDoctor(${d.id})">Edit</button>
+    </div>`).join('')}
+  </div>`;
+}
+
+function addDoctorForm(){
+  document.getElementById('dr-form-area').innerHTML=`
+  <div class="card" style="border-color:var(--accent);margin-bottom:10px">
+    <div class="card-hd"><span class="card-title">New Doctor</span><button class="btn btn-sm" onclick="renderDoctors()">Cancel</button></div>
+    <div class="g3">
+      <div><label>Doctor ID #</label><input id="df-id" type="number" placeholder="e.g. 101"></div>
+      <div><label>Full Name</label><input id="df-name" placeholder="e.g. Dr. Ahmed Fouad"></div>
+      <div><label>Specialty</label><input id="df-spec" placeholder="e.g. Glaucoma"></div>
+    </div>
+    <div class="g2" style="margin-top:8px">
+      <div><label>Email</label><input id="df-email" type="email"></div>
+      <div><label>Phone</label><input id="df-phone"></div>
+    </div>
+    <div style="margin-top:10px"><button class="btn btn-primary" onclick="saveDr()">Add Doctor</button></div>
+  </div>`;
+}
+
+function saveDr(){
+  const id=parseInt(document.getElementById('df-id').value);
+  const name=document.getElementById('df-name').value.trim();
+  if(!name||!id){toast('ID and name required');return;}
+  doctors.push({id,name,email:document.getElementById('df-email').value,phone:document.getElementById('df-phone').value,specialty:document.getElementById('df-spec').value});
+  doctors.sort((a,b)=>a.id-b.id);toast('Added!');renderDoctors();
+}
+
+function editDoctor(id){
+  const d=doctors.find(x=>x.id===id);if(!d)return;
+  document.getElementById('dr-form-area').innerHTML=`
+  <div class="card" style="border-color:var(--accent);margin-bottom:10px">
+    <div class="card-hd"><span class="card-title">Edit Dr. ${d.name}</span><button class="btn btn-sm" onclick="renderDoctors()">Cancel</button></div>
+    <div class="g3">
+      <div><label>ID</label><input value="${d.id}" disabled style="opacity:.5"></div>
+      <div><label>Name</label><input id="edf-name" value="${d.name}"></div>
+      <div><label>Specialty</label><input id="edf-spec" value="${d.specialty||''}"></div>
+    </div>
+    <div class="g2" style="margin-top:8px">
+      <div><label>Email</label><input id="edf-email" value="${d.email||''}"></div>
+      <div><label>Phone</label><input id="edf-phone" value="${d.phone||''}"></div>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <button class="btn btn-primary" onclick="saveEditDr(${id})">Save</button>
+      <button class="btn" style="color:var(--accent2)" onclick="if(confirm('Delete?')){doctors=doctors.filter(x=>x.id!==${id});toast('Deleted');renderDoctors()}">Delete</button>
+    </div>
+  </div>`;
+}
+
+function saveEditDr(id){
+  const d=doctors.find(x=>x.id===id);
+  d.name=document.getElementById('edf-name').value;
+  d.specialty=document.getElementById('edf-spec').value;
+  d.email=document.getElementById('edf-email').value;
+  d.phone=document.getElementById('edf-phone').value;
+  toast('Saved!');renderDoctors();
+}
+
+// TALKS
+function renderTalks(){
+  document.getElementById('page-content').innerHTML=`
+  <div id="talk-form-area"></div>
+  <div class="day-tabs">
+    ${DAYS.map(d=>`<button class="btn-day${currentDay===d.key?' active':''}" onclick="currentDay='${d.key}';renderTalks()">${d.label}</button>`).join('')}
+  </div>
+  ${talks.filter(t=>sessions.find(s=>s.id===t.sessionId&&s.day===currentDay)).length===0?
+  '<div class="card"><div style="text-align:center;padding:20px;color:var(--muted);font-style:italic">No talks added for this day yet.</div></div>':
+  '<div class="card"><div style="font-size:11px;color:var(--muted);font-style:italic;padding:8px 0">Talks for '+DAYS.find(d=>d.key===currentDay).label+'</div>'+
+  talks.filter(t=>sessions.find(s=>s.id===t.sessionId&&s.day===currentDay)).map(t=>{
+    const s=sessions.find(x=>x.id===t.sessionId);
+    const d=doctors.find(x=>x.id===t.drId);
+    return`<div style="display:grid;grid-template-columns:60px 60px 1fr 160px 60px auto;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px">
+      <span style="font-family:monospace;font-size:10px;color:var(--muted)">${t.code||'—'}</span>
+      <span style="font-family:monospace;color:var(--muted);font-size:10px">${t.start||''}${t.end?' – '+t.end:''}</span>
+      <span>${t.title}</span>
+      <span style="font-weight:bold;color:var(--accent);font-size:10px">${d?'Dr. '+d.name:'—'}</span>
+      <span style="font-size:10px;color:var(--muted)">${t.duration||''}m</span>
+      <button class="btn btn-sm" onclick="deleteTalk('${t.code}')">✕</button>
+    </div>`;
+  }).join('')+'</div>'}
+  <div style="margin-top:10px"><div id="add-talk-form-inline"></div></div>`;
+}
+
+function addTalkForm(){
+  document.getElementById('talk-form-area').innerHTML=`
+  <div class="card" style="border-color:var(--accent);margin-bottom:10px">
+    <div class="card-hd"><span class="card-title">New Talk / Presentation</span><button class="btn btn-sm" onclick="renderTalks()">Cancel</button></div>
+    <div class="g3">
+      <div><label>Talk Code</label><input id="tf-code" placeholder="e.g. EOS-001-01"></div>
+      <div><label>Session</label><select id="tf-sess" style="font-size:11px">${sessions.filter(s=>s.day===currentDay&&s.hall).map(s=>`<option value="${s.id}">#${s.num} ${s.name.slice(0,40)}</option>`).join('')}</select></div>
+      <div><label>Doctor</label><select id="tf-dr"><option value="">— No doctor —</option>${doctors.map(d=>`<option value="${d.id}">${d.id} – ${d.name}</option>`).join('')}</select></div>
+    </div>
+    <div style="margin-top:8px"><label>Presentation Title</label><input id="tf-title"></div>
+    <div class="g3" style="margin-top:8px">
+      <div><label>Start</label><input type="time" id="tf-start"></div>
+      <div><label>End</label><input type="time" id="tf-end"></div>
+      <div><label>Duration (min)</label><input type="number" id="tf-dur" value="15"></div>
+    </div>
+    <div style="margin-top:10px"><button class="btn btn-primary" onclick="saveTalk()">Add Talk</button></div>
+  </div>`;
+}
+
+function saveTalk(){
+  const code=document.getElementById('tf-code').value.trim();
+  const title=document.getElementById('tf-title').value.trim();
+  if(!code||!title){toast('Code and title required');return;}
+  talks.push({code,sessionId:parseInt(document.getElementById('tf-sess').value),drId:parseInt(document.getElementById('tf-dr').value)||null,title,start:document.getElementById('tf-start').value,end:document.getElementById('tf-end').value,duration:parseInt(document.getElementById('tf-dur').value)||15,webcast:null});
+  toast('Talk added!');renderTalks();
+}
+
+function deleteTalk(code){
+  if(!confirm('Delete?'))return;
+  talks=talks.filter(t=>t.code!==code);toast('Deleted');renderTalks();
+}
+
+// FULL PROGRAM
+function renderProgram(){
+  document.getElementById('page-content').innerHTML=`
+  <div class="day-tabs">
+    ${DAYS.map(d=>`<button class="btn-day${currentDay===d.key?' active':''}" onclick="currentDay='${d.key}';renderProgram()">${d.label}</button>`).join('')}
+  </div>
+  <div class="card" style="text-align:center;padding:16px;margin-bottom:10px">
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">International Congress of the Egyptian Ophthalmological Society</div>
+    <div style="font-size:20px;font-weight:bold;color:var(--accent);margin:4px 0">EOS 2026</div>
+    <div style="font-size:12px;color:var(--muted)">29 April – 1 May 2026 · InterContinental Citystars, Cairo, Egypt</div>
+    <div style="font-size:13px;font-weight:bold;margin-top:6px">${DAYS.find(d=>d.key===currentDay).label}</div>
+  </div>
+  ${sessions.filter(s=>s.day===currentDay).sort((a,b)=>a.num-b.num).map(s=>{
+    const h=hallInfo(s.hall);
+    const stk=talks.filter(t=>t.sessionId===s.id);
+    return`<div style="border:1px solid var(--border);border-radius:4px;margin-bottom:8px;overflow:hidden">
+      <div style="background:#1a1916;color:#f0ede6;padding:8px 12px;display:flex;align-items:center;gap:8px">
+        <span style="font-family:monospace;font-size:14px;color:#888;min-width:36px">${String(s.num).padStart(3,'0')}</span>
+        <div style="flex:1">
+          <div style="font-size:12px;font-weight:bold">${s.name}</div>
+          <div style="font-size:10px;color:#888;margin-top:1px">${s.hall?h.name+' «'+h.sub+'»':''} ${s.start?' | '+s.start+(s.end?' – '+s.end:''):''}</div>
+        </div>
+        ${typeBadge(s.type)}
+      </div>
+      ${stk.length?stk.map(t=>{const d=doctors.find(x=>x.id===t.drId);return`<div style="display:grid;grid-template-columns:80px 50px 1fr 60px;gap:6px;padding:7px 12px;border-bottom:1px solid var(--border);font-size:11px">
+        <span style="font-family:monospace;color:var(--muted);font-size:10px">${t.start||''}${t.end?' – '+t.end:''}</span>
+        <span style="font-family:monospace;font-size:9px;color:#ccc">${t.code}</span>
+        <div><div style="font-weight:bold;color:var(--accent)">${d?'Dr. '+d.name:'—'}</div><div style="color:var(--muted);font-style:italic;font-size:10px">${t.title}</div></div>
+        <span style="text-align:right;color:var(--muted);font-size:10px">${t.duration}m</span>
+      </div>`;}).join(''):''}
+    </div>`;
+  }).join('')}
+  <div style="margin-top:12px;text-align:center">
+    <button class="btn btn-primary" onclick="sendPrompt('Please generate a full PDF of the EOS 2026 scientific program for '+(['wed','Thu 30 Apr','fri'][['wed','thu','fri'].indexOf(currentDay)])+ ' with all sessions and talks. Use the At a Glance format similar to the uploaded files.')">Export PDF ↗</button>
+  </div>`;
+}
+
+// CONSENT
+function renderConsent(){
+  document.getElementById('page-content').innerHTML=`
+  <div class="card" style="margin-bottom:10px">
+    <div style="font-size:12px;color:var(--muted);font-style:italic">Select a doctor to generate their consent form. Doctors must be added first in the Doctors section.</div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+    <label style="text-transform:none;letter-spacing:0;margin:0;font-size:12px;display:inline;color:var(--text)">Doctor:</label>
+    <select onchange="showConsent(this.value)" style="width:260px">
+      <option value="">— Select doctor —</option>
+      ${doctors.map(d=>`<option value="${d.id}">${d.id} – ${d.name}</option>`).join('')}
+    </select>
+  </div>
+  <div id="consent-out"><div style="text-align:center;padding:30px;color:var(--muted);font-style:italic">Select a doctor above.</div></div>`;
+}
+
+function showConsent(drId){
+  if(!drId)return;
+  const d=doctors.find(x=>x.id===parseInt(drId));if(!d)return;
+  const dTalks=talks.filter(t=>t.drId===d.id);
+  document.getElementById('consent-out').innerHTML=`
+  <div style="border:2px solid #1a1916;border-radius:5px;padding:18px;background:#fff">
+    <div style="font-size:16px;font-weight:bold;border-bottom:2px solid #1a1916;padding-bottom:8px;margin-bottom:12px">Consent Form — EOS 2026</div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+      <div style="font-size:16px;font-weight:bold">${d.name}</div>
+      <div style="font-family:monospace;font-size:16px;font-weight:bold;color:var(--muted)">${d.id}</div>
+    </div>
+    <div style="font-size:10px;font-style:italic;color:var(--muted);margin-bottom:10px">All presentations will be recorded audio-video synchronized with motion picture of speaker.<br>PowerPoint presentations will be converted to PDF.</div>
+    ${dTalks.length===0?'<div style="color:var(--muted);font-style:italic">No talks assigned to this doctor yet.</div>':
+    `<table style="width:100%;border-collapse:collapse;font-size:11px">
+      <tr style="background:#1a1916;color:#fff"><th style="padding:5px 6px;text-align:left">Date</th><th>As</th><th>Starts</th><th>Ends</th><th>Min.</th><th>Hall</th><th>Session</th><th>Type</th></tr>
+      ${dTalks.map(t=>{const s=sessions.find(x=>x.id===t.sessionId);return`
+      <tr><td style="border:1px solid #ddd;padding:4px 6px">${s?DAYS.find(d=>d.key===s.day).label:''}</td>
+      <td style="border:1px solid #ddd;padding:4px 6px">Speaker</td>
+      <td style="border:1px solid #ddd;padding:4px 6px;font-family:monospace">${t.start}</td>
+      <td style="border:1px solid #ddd;padding:4px 6px;font-family:monospace">${t.end}</td>
+      <td style="border:1px solid #ddd;padding:4px 6px">${t.duration}</td>
+      <td style="border:1px solid #ddd;padding:4px 6px">${s?hallInfo(s.hall).name:''}</td>
+      <td style="border:1px solid #ddd;padding:4px 6px">${s?s.num:''}</td>
+      <td style="border:1px solid #ddd;padding:4px 6px">${s?s.type:''}</td></tr>
+      <tr><td colspan="8" style="border:1px solid #ddd;padding:5px 6px">
+        <span style="font-family:monospace;font-size:10px;color:var(--accent)">${t.code}</span> &nbsp;
+        <b>${s?s.name:''}</b><br><i>${t.title}</i><br>
+        <div style="display:flex;gap:16px;margin-top:5px;font-size:11px">
+          <label style="display:flex;align-items:center;gap:5px;margin:0;text-transform:none;letter-spacing:0;cursor:pointer;color:var(--text)"><input type="radio" name="wc${t.code}" onchange="t.webcast=true"> YES, webcast my presentation</label>
+          <label style="display:flex;align-items:center;gap:5px;margin:0;text-transform:none;letter-spacing:0;cursor:pointer;color:var(--text)"><input type="radio" name="wc${t.code}" onchange="t.webcast=false"> DO NOT webcast my presentation</label>
+        </div>
+      </td></tr>`;}).join('')}
+    </table>`}
+    <div style="border-top:1px solid #333;margin-top:24px;padding-top:6px;text-align:center;font-size:11px;color:var(--muted)">Signature:<br><br>${d.name}</div>
+    <div style="margin-top:12px;text-align:right">
+      <button class="btn btn-primary btn-sm" onclick="sendPrompt('Generate a printable PDF consent form for EOS 2026 for Dr. ${d.name} (ID: ${d.id}). Include all their talks.')">Export PDF ↗</button>
+    </div>
+  </div>`;
+}
+
+// PERSONAL
+function renderPersonal(){
+  document.getElementById('page-content').innerHTML=`
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+    <label style="text-transform:none;letter-spacing:0;margin:0;font-size:12px;display:inline;color:var(--text)">Doctor:</label>
+    <select onchange="showPersonal(this.value)" style="width:260px">
+      <option value="">— Select doctor —</option>
+      ${doctors.map(d=>`<option value="${d.id}">${d.id} – ${d.name}</option>`).join('')}
+    </select>
+  </div>
+  <div id="personal-out"><div style="text-align:center;padding:30px;color:var(--muted);font-style:italic">Select a doctor to view their personal schedule.</div></div>`;
+}
+
+function showPersonal(drId){
+  if(!drId)return;
+  const d=doctors.find(x=>x.id===parseInt(drId));if(!d)return;
+  const dTalks=talks.filter(t=>t.drId===d.id);
+  document.getElementById('personal-out').innerHTML=`
+  <div class="card">
+    <div style="text-align:center;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)">
+      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Personal Schedule — EOS 2026</div>
+      <div style="font-size:16px;font-weight:bold;margin:4px 0">${d.name}</div>
+      ${d.email?`<div style="font-size:11px;color:var(--accent)">${d.email}</div>`:''}
+      ${d.phone?`<div style="font-size:11px;font-family:monospace;color:var(--accent)">${d.phone}</div>`:''}
+    </div>
+    ${dTalks.length===0?'<div style="color:var(--muted);font-style:italic;text-align:center;padding:20px">No talks assigned yet.</div>':
+    `<table style="width:100%;border-collapse:collapse;font-size:11px">
+      <tr style="background:#1a1916;color:#fff"><th style="padding:5px 6px;text-align:left">Day</th><th>As</th><th>Start</th><th>End</th><th>Min.</th><th>Hall</th><th>Session</th></tr>
+      ${dTalks.map(t=>{const s=sessions.find(x=>x.id===t.sessionId);return`
+      <tr><td style="border:1px solid #ddd;padding:4px 6px">${s?DAYS.find(d=>d.key===s.day).label:''}</td>
+      <td style="border:1px solid #ddd;padding:4px 6px;color:var(--accent2);font-weight:bold">Speaker</td>
+      <td style="border:1px solid #ddd;padding:4px 6px;font-family:monospace">${t.start}</td>
+      <td style="border:1px solid #ddd;padding:4px 6px;font-family:monospace">${t.end}</td>
+      <td style="border:1px solid #ddd;padding:4px 6px">${t.duration}</td>
+      <td style="border:1px solid #ddd;padding:4px 6px">${s?hallInfo(s.hall).name:''}</td>
+      <td style="border:1px solid #ddd;padding:4px 6px">${s?'#'+s.num+' '+s.name.slice(0,35):''}</td></tr>
+      <tr><td colspan="7" style="border:1px solid #ddd;padding:4px 6px;font-size:10px"><span style="font-family:monospace;color:var(--accent)">${t.code}</span> — <i>${t.title}</i></td></tr>`;}).join('')}
+    </table>`}
+    <div style="margin-top:12px;text-align:right;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-family:monospace;font-size:12px;font-weight:bold;color:var(--muted)">${d.name} · ${d.id}</span>
+      <button class="btn btn-primary btn-sm" onclick="sendPrompt('Generate a PDF personal schedule for Dr. ${d.name} for EOS 2026.')">Export PDF ↗</button>
+    </div>
+  </div>`;
+}
+
+showPage('dashboard');
+</script>
